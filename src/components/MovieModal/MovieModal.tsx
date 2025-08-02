@@ -10,7 +10,10 @@ interface MovieModalProps {
 
 export default function MovieModal({ movie, onClose }: MovieModalProps) {
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+
     const handleClickOutside = (e: MouseEvent) => {
       if ((e.target as HTMLElement).classList.contains(styles.backdrop)) {
         onClose();
@@ -28,17 +31,29 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
     };
   }, [onClose]);
 
+  const imageUrl = movie.backdrop_path
+    ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`
+    : movie.poster_path
+      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+      : null;
+
   return createPortal(
     <div className={styles.backdrop} role="dialog" aria-modal="true">
       <div className={styles.modal}>
-        <button className={styles.closeButton} aria-label="Close modal" onClick={onClose}>
+        <button
+          className={styles.closeButton}
+          aria-label="Close modal"
+          onClick={onClose}
+        >
           &times;
         </button>
-        <img
-          src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-          alt={movie.title}
-          className={styles.image}
-        />
+
+        {imageUrl ? (
+          <img src={imageUrl} alt={movie.title} className={styles.image} />
+        ) : (
+          <div className={styles.placeholder}>Image not available</div>
+        )}
+
         <div className={styles.content}>
           <h2>{movie.title}</h2>
           <p>{movie.overview}</p>
