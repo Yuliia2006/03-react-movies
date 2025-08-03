@@ -1,51 +1,48 @@
-import { useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { useEffect, useState } from 'react';
+import { searchMovies } from '../../services/movieService';
 import SearchBar from '../SearchBar/SearchBar';
 import MovieGrid from '../MovieGrid/MovieGrid';
-import Loader from '../Loader/Loader';
-import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import MovieModal from '../MovieModal/MovieModal';
-import { searchMovies } from '../../services/movieService';
 import type { Movie } from '../../types/movie';
+import styles from './App.module.css';
 
 export default function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [query, setQuery] = useState('');
 
-  const handleSearch = async (query: string) => {
-    setLoading(true);
-    setError(false);
-    setMovies([]);
+  useEffect(() => {
+    if (!query) return;
 
-    try {
-      const results = await searchMovies(query);
-
-      if (results.length === 0) {
-        toast('No movies found for your request.');
+    async function fetchData() {
+      try {
+        const results = await searchMovies(query);
+        setMovies(results);
+      } catch (error) {
+        console.error('Failed to fetch movies:', error);
       }
-
-      setMovies(results);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
     }
+
+    fetchData();
+  }, [query]);
+
+  const handleSearch = (newQuery: string) => {
+    setQuery(newQuery);
+  };
+
+  const openModal = (movie: Movie) => {
+    setSelectedMovie(movie);
+  };
+
+  const closeModal = () => {
+    setSelectedMovie(null);
   };
 
   return (
-    <>
-      <Toaster />
+    <div className={styles.container}>
       <SearchBar onSearch={handleSearch} />
-      {loading && <Loader />}
-      {error && <ErrorMessage />}
-      {movies.length > 0 && !loading && !error && (
-        <MovieGrid movies={movies} onSelect={setSelectedMovie} />
-      )}
-      {selectedMovie && (
-        <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />
-      )}
-    </>
+      <MovieGrid movies={movies} onMovieClick={openModal} />
+      {selectedMovie && <MovieModal movie={selectedMovie} onClose={closeModal} />}
+    </div>
   );
 }
