@@ -14,20 +14,12 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
       if (e.key === 'Escape') onClose();
     };
 
-    const handleClickOutside = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).classList.contains(styles.backdrop)) {
-        onClose();
-      }
-    };
-
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('click', handleClickOutside);
 
     return () => {
       document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('click', handleClickOutside);
     };
   }, [onClose]);
 
@@ -38,7 +30,16 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
       : null;
 
   return createPortal(
-    <div className={styles.backdrop} role="dialog" aria-modal="true">
+    <div
+      className={styles.backdrop}
+      role="dialog"
+      aria-modal="true"
+      onClick={(e) => {
+        if (e.currentTarget === e.target) {
+          onClose();
+        }
+      }}
+    >
       <div className={styles.modal}>
         <button
           className={styles.closeButton}
@@ -49,7 +50,11 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
         </button>
 
         {imageUrl ? (
-          <img src={imageUrl} alt={movie.title} className={styles.image} />
+          <img
+            src={imageUrl}
+            alt={movie.title}
+            className={styles.image}
+          />
         ) : (
           <div className={styles.placeholder}>Image not available</div>
         )}

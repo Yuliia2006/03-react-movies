@@ -5,7 +5,7 @@ import MovieGrid from '../MovieGrid/MovieGrid';
 import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import MovieModal from '../MovieModal/MovieModal';
-import { fetchMovies } from '../../services/movieService';
+import { searchMovies } from '../../services/movieService';
 import type { Movie } from '../../types/movie';
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
     setMovies([]);
 
     try {
-      const results = await fetchMovies(query);
+      const results = await searchMovies(query);
 
       if (results.length === 0) {
         toast('No movies found for your request.');
@@ -37,7 +37,7 @@ export default function App() {
   return (
     <>
       <Toaster />
-      <SearchBar onSubmit={handleSearch} />
+      <SearchBar onSearch={handleSearch} />
       {loading && <Loader />}
       {error && <ErrorMessage />}
       {movies.length > 0 && !loading && !error && (
