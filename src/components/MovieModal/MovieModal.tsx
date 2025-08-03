@@ -23,22 +23,18 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
     };
   }, [onClose]);
 
-  const imageUrl = movie.backdrop_path
-    ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`
-    : movie.poster_path
-      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-      : null;
+  function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  }
 
   return createPortal(
     <div
       className={styles.backdrop}
       role="dialog"
       aria-modal="true"
-      onClick={(e) => {
-        if (e.currentTarget === e.target) {
-          onClose();
-        }
-      }}
+      onClick={handleBackdropClick}
     >
       <div className={styles.modal}>
         <button
@@ -48,17 +44,11 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
         >
           &times;
         </button>
-
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={movie.title}
-            className={styles.image}
-          />
-        ) : (
-          <div className={styles.placeholder}>Image not available</div>
-        )}
-
+        <img
+          src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+          alt={movie.title}
+          className={styles.image}
+        />
         <div className={styles.content}>
           <h2>{movie.title}</h2>
           <p>{movie.overview}</p>

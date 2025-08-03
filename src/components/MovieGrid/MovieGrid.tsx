@@ -3,7 +3,7 @@ import type { Movie } from '../../types/movie';
 
 interface MovieGridProps {
   movies: Movie[];
-  onMovieClick: (movie: Movie) => void; // ← додай це
+ onMovieClick: (movie: Movie) => void;
 }
 
 export default function MovieGrid({ movies, onMovieClick }: MovieGridProps) {
