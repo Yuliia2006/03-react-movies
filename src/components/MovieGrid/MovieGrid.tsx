@@ -3,33 +3,25 @@ import type { Movie } from '../../types/movie';
 
 interface MovieGridProps {
   movies: Movie[];
- onMovieClick: (movie: Movie) => void;
+  onSelect: (movie: Movie) => void;
 }
 
-export default function MovieGrid({ movies, onMovieClick }: MovieGridProps) {
+export default function MovieGrid({ movies, onSelect }: MovieGridProps) {
   return (
-    <div className={styles.grid}>
+    <ul className={styles.grid}>
       {movies.map((movie) => (
-        <div
-          key={movie.id}
-          className={styles.card}
-          onClick={() => onMovieClick(movie)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && onMovieClick(movie)}
-        >
-          <img
-            src={
-              movie.poster_path
-                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                : 'https://via.placeholder.com/500x750?text=No+Image'
-            }
-            alt={movie.title}
-            className={styles.poster}
-          />
-          <h3 className={styles.title}>{movie.title}</h3>
-        </div>
+        <li key={movie.id}>
+          <div className={styles.card} onClick={() => onSelect(movie)}>
+            <img
+              className={styles.image}
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+              loading="lazy"
+            />
+            <h2 className={styles.title}>{movie.title}</h2>
+          </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
