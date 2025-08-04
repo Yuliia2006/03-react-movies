@@ -38,7 +38,7 @@ export default function App() {
   return (
     <>
       <Toaster />
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar onSubmit={handleSearch} />
       {loading && <Loader/>}
       {error && <ErrorMessage />}
       {movies.length > 0 && !loading && !error && (
